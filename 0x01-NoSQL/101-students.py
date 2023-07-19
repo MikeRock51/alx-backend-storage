@@ -15,15 +15,12 @@ from statistics import mean
 def top_students(mongo_collection):
     """Returns all students sorted by average score"""
 
-    students = mongo_collection.find()
+    pipeline = [
+        {'$project': {
+            'name': '$name',
+            'averageScore': {'$avg': '$topics.score'}
+        }},
+        {'$sort': {'averageScore': -1}}
+    ]
 
-    for student in students:
-        average_score = mean(
-            [topic.get('score') for topic in student.get('topics')]
-        )
-        st = mongo_collection.update_one(
-            {'_id': student.get('_id')},
-            {'$set': {'averageScore': average_score}}
-        )
-
-    return mongo_collection.find().sort('averageScore', -1)
+    return mongo_collection.aggregate(pipeline)
