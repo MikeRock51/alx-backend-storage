@@ -36,7 +36,14 @@ if __name__ == '__main__':
             {'method': 'GET', 'path': '/status'}
     )
 
-    ips = sorted(collection.distinct("ip"), reverse=True)[:10]
+    ips = collection.aggregate([
+        {"$group": {
+            "_id": "$ip",
+            "count": {"$sum": 1}
+        }},
+        {"$sort": {"count": -1}},
+        {"$limit": 10}
+    ])
 
     print("{} logs".format(logCount))
     print("Methods:")
@@ -46,8 +53,7 @@ if __name__ == '__main__':
     print("\tmethod PATCH: {}".format(patchMethodCount))
     print("\tmethod DELETE: {}".format(deleteMethodCount))
     print("{} status check".format(statusGetCount))
-    
+
     print('IPS:')
     for ip in ips:
-        print("\t{}: {}".format(ip,
-            collection.count_documents({"ip": ip})))
+        print("\t{}: {}".format(ip.get('_id'), ip.get('count')))
