@@ -54,6 +54,6 @@ if __name__ == '__main__':
     print("\tmethod DELETE: {}".format(deleteMethodCount))
     print("{} status check".format(statusGetCount))
 
-    print('IPS:')
+    print('IPs:')
     for ip in ips:
         print("\t{}: {}".format(ip.get('_id'), ip.get('count')))
