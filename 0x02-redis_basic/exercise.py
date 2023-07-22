@@ -17,7 +17,7 @@ def replay(method: Callable) -> Callable:
     inCalls = calls.lrange(inKey, 0, -1)
     outCalls = calls.lrange(outKey, 0, -1)
 
-    print(f"{methodName} was called {len(inCalls)} times")
+    print(f"{methodName} was called {len(inCalls)} times:")
 
     for inCall, outCall in zip(inCalls, outCalls):
         inCall = inCall.decode('UTF-8')
