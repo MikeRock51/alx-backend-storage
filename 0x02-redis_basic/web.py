@@ -7,6 +7,7 @@
 """
 
 import requests
+import redis
 
 
 def get_page(url: str) -> str:
@@ -14,4 +15,13 @@ def get_page(url: str) -> str:
         Automatically parametrize Cache.get
         with the correct conversion function.
     """
+    cache = redis.Redis()
+    key = f"count:{url}"
+
+    cache.setex(key, 10, 0)
+    cache.incr(key)
+
     return requests.get(url).text
+
+# if __name__ == '__main__':
+#    print(get_page('http://slowwly.robertomurray.co.uk'))
