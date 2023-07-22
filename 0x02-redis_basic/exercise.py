@@ -7,6 +7,24 @@ from typing import Union, Optional, Callable
 from functools import wraps
 
 
+def replay(method: Callable) -> Callable:
+    """Displays the history of calls to a particular function"""
+    calls = redis.Redis()
+    methodName = method.__qualname__
+    inKey = f"{methodName}:inputs"
+    outKey = f"{methodName}:outputs"
+
+    inCalls = calls.lrange(inKey, 0, -1)
+    outCalls = calls.lrange(outKey, 0, -1)
+
+    print(f"{methodName} was called {len(inCalls)} times")
+
+    for inCall, outCall in zip(inCalls, outCalls):
+        inCall = inCall.decode('UTF-8')
+        outCall = outCall.decode('UTF-8')
+        print(f"{methodName}(*({inCall})) -> {outCall}")
+
+
 def call_history(method: Callable) -> Callable:
     """Stores the history of inputs and output for a particular function"""
     inKey = f"{method.__qualname__}:inputs"
@@ -20,7 +38,6 @@ def call_history(method: Callable) -> Callable:
         self._redis.rpush(outKey, str(out))
 
         return out
-
     return wrapper
 
 
