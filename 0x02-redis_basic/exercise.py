@@ -22,7 +22,7 @@ def replay(method: Callable) -> Callable:
     for inCall, outCall in zip(inCalls, outCalls):
         inCall = inCall.decode('UTF-8')
         outCall = outCall.decode('UTF-8')
-        print(f"{methodName}(*({inCall})) -> {outCall}")
+        print(f"{methodName}(*{inCall}) -> {outCall}")
 
 
 def call_history(method: Callable) -> Callable:
